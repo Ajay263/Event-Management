@@ -16,4 +16,6 @@ urlpatterns = [
     path('delete-event/<int:event_id>', views.delete_event, name='delete_event'),
    
     # Add more URLs as needed
+
+    path('send_email', views.send_email_user, name='send_email'),
 ]
