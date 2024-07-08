@@ -16,6 +16,7 @@ urlpatterns = [
     path('qr_decode_profile/', views.scan_QR_code_mobile, name='camera_scan_qrcode'),
     path('edit-event/<int:event_id>', views.edit_event, name='edit_event'),
     path('delete-event/<int:event_id>', views.delete_event, name='delete_event'),
-    path('events/send-email/', views.send_email_user, name='send_email'),
+    path('send-email/', views.send_email_user, name='send_email'),
+
 ]
 
