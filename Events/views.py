@@ -373,7 +373,7 @@ def send_email_user(request):
     if request.method == 'POST':
         try:
             users = User.objects.all()
-            from_email = settings.EMAIL_HOST_USER
+            from_email = 'junioralexio607@gmail.com'
 
             for user in users:
                 # Filter scans for the current user that have a non-null time_taken value
