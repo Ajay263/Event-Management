@@ -16,6 +16,13 @@ import re
 import qrcode
 from datetime import timedelta
 from django.views.decorators.csrf import csrf_exempt
+import logging
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.conf import settings
+from django.contrib.auth.decorators import user_passes_test
+
+logger = logging.getLogger(__name__)
 
 
 # import cv2
@@ -360,22 +367,6 @@ def scan_QR_code_mobile(request):
             return JsonResponse({'message': None, 'time_taken': None, 'error': 'No user Found.'})
     else:
         return render(request, 'qr_code_scan.html')
-
-
-
-
-
-import logging
-from django.shortcuts import render, redirect
-from django.core.mail import send_mail
-from django.contrib import messages
-from django.conf import settings
-from django.contrib.auth.models import User
-from .models import BarcodeScan
-from django.contrib.auth.decorators import user_passes_test
-
-# Set up logging
-logger = logging.getLogger(__name__)
 
 @user_passes_test(lambda u: u.is_superuser)
 def send_email_user(request):
