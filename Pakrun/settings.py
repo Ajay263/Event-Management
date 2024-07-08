@@ -169,4 +169,4 @@ CSRF_USE_SESSIONS = True
 
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 
-CSRF_TRUSTED_ORIGINS = ["https:ocr.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["https://ocr.onrender.com"]
