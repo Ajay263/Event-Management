@@ -14,7 +14,7 @@ import qrcode
 from django.conf import settings
 import traceback
 
-
+@csrf_exempt 
 def user_login(request):
     """
     View function for user login.
