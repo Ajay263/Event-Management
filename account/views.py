@@ -13,6 +13,7 @@ import os
 import qrcode
 from django.conf import settings
 import traceback
+from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt 
 def user_login(request):
