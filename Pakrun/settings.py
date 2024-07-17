@@ -170,3 +170,5 @@ CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 
 CSRF_TRUSTED_ORIGINS = ["https://event-management-t0dm.onrender.com"]  
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
