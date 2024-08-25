@@ -3,6 +3,7 @@
 from django.contrib import admin
 from .models import Event, EventRegistration,BarcodeScan
 
+
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'date', 'location', 'created_by', 'view_registered_users')
 
@@ -14,6 +15,13 @@ class EventAdmin(admin.ModelAdmin):
 admin.site.register(Event, EventAdmin)
 admin.site.register(EventRegistration)
 
-admin.site.register(BarcodeScan)
+
+@admin.register(BarcodeScan)
+class BarcodeScanAdmin(admin.ModelAdmin):
+    list_display = ['user', 'event', 'scan_time', 'time_taken']
+    list_filter = ['event', 'scan_time', 'time_taken']
+    search_fields = ['user__username', 'event__name']
+    ordering = ['time_taken', 'scan_time']  # Orders by the shortest time first, then by scan time
+
 
 

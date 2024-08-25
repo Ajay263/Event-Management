@@ -81,8 +81,8 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 {% if request.user.is_authenticated %}
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item {% if section == "Home" %}active{% endif %}">
-                        <a class="nav-link" href="{% url "dashboard" %}">Home <span class="sr-only">(current)</span></a>
+                    {% comment %} <li class="nav-item {% if section == "Home" %}active{% endif %}">
+                        <a class="nav-link" href="{% url "dashboard" %}">Home <span class="sr-only">(current)</span></a> {% endcomment %}
                     </li>
                     <li class="nav-item {% if section == "Events" %}active{% endif %}">
                         <a class="nav-link" href="{% url "event_list" %}">Events</a>
