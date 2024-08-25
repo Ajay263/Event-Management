@@ -2,6 +2,7 @@ asgiref==3.7.2
 colorama==0.4.6
 dj-database-url==2.2.0
 Django==4.0.2
+django-widget-tweaks==1.5.0
 gunicorn==22.0.0
 packaging==24.1
 pillow==10.2.0
