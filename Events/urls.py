@@ -39,5 +39,7 @@ urlpatterns = [
 
      path('event/<int:event_id>/results/', views.event_results, name='event_results'),
 
+     path('about/', views.about_us, name='about_us'),
+
 
 ]
