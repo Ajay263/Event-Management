@@ -174,13 +174,26 @@ AUTHENTICATION_BACKENDS = [
     'account.authentication.EmailAuthBackend',
 ]
 
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = True
-CSRF_USE_SESSIONS = True
+# CSRF_COOKIE_SECURE = False
+# CSRF_COOKIE_HTTPONLY = True
+# CSRF_USE_SESSIONS = True
 
+# CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+
+# CSRF_TRUSTED_ORIGINS = ["https://event-management-t0dm.onrender.com"]  
+
+
+
+# CSRF settings
+CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_HTTPONLY = False  # Temporarily set to False for debugging
+CSRF_USE_SESSIONS = False  # Use cookie-based storage
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
-
-CSRF_TRUSTED_ORIGINS = ["https://event-management-t0dm.onrender.com"]  
+CSRF_TRUSTED_ORIGINS = [
+    "https://event-management-t0dm.onrender.com",
+    "http://localhost",
+    "http://127.0.0.1",
+]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
