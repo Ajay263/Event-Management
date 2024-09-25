@@ -113,7 +113,7 @@ def register_for_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
     # Prevent registration if the event has been stopped
-    if event.stop_time:
+    if event.stop_time and timezone.now() > event.stop_time:
         messages.error(request, 'The event has already ended. Registration is closed.')
         return redirect('event_list')
 
@@ -1049,7 +1049,7 @@ def about_us(request):
         'description': description.strip().split('\n\n'),  # Split the description into paragraphs
         'image': '/static/images/about-hero.jpg',
         'stats': [
-            {'number': '500K+', 'text': 'Participants'},
+            {'number': '300+', 'text': 'Participants'},
             {'number': '50+', 'text': 'Global Events'},
             {'number': '10M+', 'text': 'Raised for Charity'}
         ]
