@@ -999,9 +999,24 @@ def send_email_user(request):
     return render(request, 'send_email.html')
 
 
+
+
+
+
+
+from django.contrib import messages
+from django.conf import settings
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import user_passes_test
+import logging
+
+logger = logging.getLogger(__name__)
+
+@user_passes_test(lambda u: u.is_superuser)
 def event_results(request, event_id):
     """
-    Displays the results of an event, including all barcode scan records.
+    Displays the results of an event and allows sending email to all users with their scan details.
 
     Args:
         request (HttpRequest): The HTTP request object.
@@ -1012,9 +1027,43 @@ def event_results(request, event_id):
     """
     # Get the event based on the event_id
     event = get_object_or_404(Event, id=event_id)
-    
+
     # Filter the BarcodeScan records for the selected event
     results = BarcodeScan.objects.filter(event=event).order_by('scan_time')
+
+    # Check if form is submitted to send emails
+    if request.method == 'POST':
+        try:
+            users = User.objects.all()
+            from_email = settings.EMAIL_HOST_USER
+
+            for user in users:
+                # Filter scans for the current user that have a non-null time_taken value
+                scans = BarcodeScan.objects.filter(user=user, event=event, time_taken__isnull=False)
+                if scans.exists():
+                    subject = 'OCR Time Details for Event: {}'.format(event.name)
+                    message = (
+                        f"Hello {user.username},\n\n"
+                        "Congratulations on completing your race! We are thrilled to share your scan details with you.\n\n"
+                        "Here are your scan details:\n"
+                    )
+                    for scan in scans:
+                        message += f"Scan Time: {scan.scan_time}, Time Taken: {scan.time_taken} seconds\n"
+                    message += (
+                        "\nYour performance was outstanding, and we are proud of your achievement.\n\n"
+                        "Best Regards,\n"
+                        "OCR"
+                    )
+                    recipient_list = [user.email]
+
+                    # Log the email details before sending
+                    logger.info(f'Sending email to {user.email} with subject "{subject}"')
+                    send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+                    messages.success(request, f'Email sent to {user.email}')
+            
+        except Exception as e:
+            logger.error("Error sending emails: %s", e)
+            messages.error(request, 'An error occurred while sending emails.')
 
     context = {
         'event': event,
@@ -1022,6 +1071,37 @@ def event_results(request, event_id):
     }
     
     return render(request, 'event_results.html', context)
+
+
+
+
+
+
+
+
+# def event_results(request, event_id):
+#     """
+#     Displays the results of an event, including all barcode scan records.
+
+#     Args:
+#         request (HttpRequest): The HTTP request object.
+#         event_id (int): The ID of the event for which to display results.
+
+#     Returns:
+#         HttpResponse: Renders the event results page with the event and its scan records.
+#     """
+#     # Get the event based on the event_id
+#     event = get_object_or_404(Event, id=event_id)
+    
+#     # Filter the BarcodeScan records for the selected event
+#     results = BarcodeScan.objects.filter(event=event).order_by('scan_time')
+
+#     context = {
+#         'event': event,
+#         'results': results,
+#     }
+    
+#     return render(request, 'event_results.html', context)
 
 
 def about_us(request):

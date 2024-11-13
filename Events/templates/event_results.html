@@ -7,10 +7,14 @@
     <h1 class="text-center mb-4">Results for {{ event.name }}</h1>
     
     {% if results %}
-    <!-- Added Email Button -->
+    <!-- Email Button -->
     <div class="text-right mb-3">
-        <a href="#" class="btn btn-primary rounded-pill" style="background-color: #4e73df; border-color: #4e73df;">
-            <i class="fas fa-envelope"></i> Send Results </a>
+        <form method="post" action="#">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary rounded-pill" style="background-color: #4e73df; border-color: #4e73df;">
+                <i class="fas fa-envelope"></i> Send Results to All Users
+            </button>
+        </form>
     </div>
     {% endif %}
 

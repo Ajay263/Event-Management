@@ -29,6 +29,7 @@ urlpatterns = [
 
     path('stop_event/', views.stop_event, name='stop_event'),
 
+ 
     path('send_email', views.send_email_user, name='send_email'),
 
 
