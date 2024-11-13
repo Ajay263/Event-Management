@@ -1010,6 +1010,7 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import user_passes_test
 import logging
+from django.utils.safestring import mark_safe
 
 logger = logging.getLogger(__name__)
 
@@ -1044,7 +1045,7 @@ def event_results(request, event_id):
                     subject = 'OCR Time Details for Event: {}'.format(event.name)
                     message = (
                         f"Hello {user.username},\n\n"
-                        "Congratulations on completing your race! We are thrilled to share your scan details with you.\n\n"
+                        "Congratulations on completing your OCR race! We are thrilled to share your scan details with you.\n\n"
                         "Here are your scan details:\n"
                     )
                     for scan in scans:
@@ -1059,7 +1060,7 @@ def event_results(request, event_id):
                     # Log the email details before sending
                     logger.info(f'Sending email to {user.email} with subject "{subject}"')
                     send_mail(subject, message, from_email, recipient_list, fail_silently=False)
-                    messages.success(request, f'Email sent to {user.email}')
+                    messages.success(request, mark_safe(f'<strong>Results for the Event <strong style="font-weight: 900;">{event.name}</strong>  have been successfully sent to all the users.</strong>'))
             
         except Exception as e:
             logger.error("Error sending emails: %s", e)
