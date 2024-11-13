@@ -17,6 +17,8 @@
         .hero-image {
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            height: auto;
         }
         .stat-card {
             background-color: #fff;
@@ -26,7 +28,6 @@
         .stat-card:hover {
             transform: translateY(-5px);
         }
-        /* Green button */
         .cta-button {
             background-color: #4CAF50;
             border: none;
@@ -38,7 +39,6 @@
         .cta-button:hover {
             background-color: #45a049;
         }
-        /* Footer complementary color */
         footer {
             background-color: #6a1b9a;
             color: white;
@@ -84,7 +84,7 @@
                     <img src="{{ image }}" alt="Extreme Challenge in action" class="img-fluid hero-image mb-4 mb-lg-0">
                 </div>
                 <div class="col-lg-6 order-lg-1">
-                    <h1 class="display-4 fw-bold mb-3">{{ title }}</h1>
+                    <h1 class="display-4 fw-bold mb-3">About Us</h1>
                     <p class="lead text-muted mb-4">{{ subtitle }}</p>
                     <div class="mb-4">
                         {% for paragraph in description %}
@@ -101,8 +101,8 @@
                             </div>
                         {% endfor %}
                     </div>
-                    <a href="#" class="btn btn-primary btn-lg cta-button">Join Our Next Event</a>
-                </div>
+                    <a href="{% url 'event_list' %}" class="btn btn-primary btn-lg cta-button">Join Our Next Event</a>
+                </div>  
             </div>
         </div>
     </section>

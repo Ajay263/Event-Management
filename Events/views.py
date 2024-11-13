@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from .forms import EventForm, EventSelectionForm
-from .models import BarcodeScan, Event, EventRegistration
+from .models import BarcodeScan, Event, EventRegistration,AboutSection
 from account.models import Profile
 
 
@@ -1105,35 +1105,25 @@ def event_results(request, event_id):
 #     return render(request, 'event_results.html', context)
 
 
+from django.shortcuts import render
+from .models import AboutSection
+
+from django.shortcuts import render
+from .models import AboutSection
+
 def about_us(request):
-    description = '''
-        At Extreme Challenge, we're not just an obstacle course race – we're a crucible for human potential. 
-        Founded in 2010 by a team of fitness enthusiasts and former military personnel, our mission is to push 
-        the boundaries of what people believe is possible.
+    # Fetch the first entry in AboutSection (assuming only one entry)
+    about_section = AboutSection.objects.first()
 
-        Our meticulously designed courses blend natural terrain with state-of-the-art obstacles, creating a 
-        unique challenge that tests both physical prowess and mental resilience. From heart-pounding sprints 
-        to grueling endurance trials, we offer a diverse range of events suitable for beginners and elite 
-        athletes alike.
+    if about_section is None:
+        # Handle the case where no AboutSection entry exists
+        return render(request, 'about_us.html', {'error': 'No About Us section found.'})
 
-        But Extreme Challenge is more than just a race. It's a community of like-minded individuals who 
-        support and inspire each other to reach new heights. Our events foster teamwork, build confidence, 
-        and create lasting memories.
-
-        Join us for an unforgettable adventure that will push you to your limits and beyond. At Extreme 
-        Challenge, we don't just host races – we forge champions.
-        '''
-    
     context = {
-        'title': 'About OCR',
-        'subtitle': 'Pushing Boundaries, Creating Champions',
-        'description': description.strip().split('\n\n'),  # Split the description into paragraphs
-        'image': '/static/images/about-hero.jpg',
-        'stats': [
-            {'number': '300+', 'text': 'Participants'},
-            {'number': '50+', 'text': 'Global Events'},
-            {'number': '10M+', 'text': 'Raised for Charity'}
-        ]
+       
+        'subtitle': about_section.subtitle,
+        'description': about_section.description.strip().split('\n'),  # Split description into paragraphs
+        'image': about_section.image.url if about_section.image else None,  # Check if image exists
+        'stats': about_section.stats.all(),
     }
     return render(request, 'about_us.html', context)
-
