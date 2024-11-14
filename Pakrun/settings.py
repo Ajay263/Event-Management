@@ -197,18 +197,26 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
 JAZZMIN_SETTINGS = {
     # Basic Settings
     "site_title": "OCR",
     "site_header": "OCR",
     "site_brand": "OCR",
-    "site_icon": "images/logo.png",
-    "site_logo": "images/logo.png",
+
+
+
+    # Update these paths to point to your static directory in the Events app
+    "site_icon": "img/logo.png",
+    "site_logo": "img/logo.png",
+    "login_logo": "img/logo.png",  # Added login logo
+    "login_logo_dark": "img/logo.png",  # Added dark theme login logo
+    
+    # Optional: Add CSS classes to style your logo
+    "site_logo_classes": "img-circle",
+    
     "welcome_sign": "Welcome to the OCR Admin",
     "copyright": "OCR",
-    "user_avatar": "images/logo.png",
+    "user_avatar": "img/logo.png",
     
     # Top Menu
     "topmenu_links": [
