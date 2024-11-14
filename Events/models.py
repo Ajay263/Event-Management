@@ -55,7 +55,7 @@ class AboutSection(models.Model):
     image = models.ImageField(upload_to='about_images/', help_text="Upload an image for the about section.")
 
     def __str__(self):
-        return self.title
+        return self.description 
 
 
 class Stat(models.Model):
