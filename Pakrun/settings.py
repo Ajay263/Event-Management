@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'widget_tweaks',
     'Events.apps.EventsConfig',
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
