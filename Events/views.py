@@ -14,13 +14,11 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
 from .forms import EventForm, EventSelectionForm
 from .models import BarcodeScan, Event, EventRegistration,AboutSection
 from account.models import Profile
-
-
-
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -51,8 +49,6 @@ def create_event(request):
         form = EventForm()
     return render(request, 'create_event.html', {'form': form})
 
-
-
 @login_required
 def event_list(request):
     """
@@ -73,9 +69,6 @@ def event_list(request):
     registered_events = registered_events_list if registered_events_list else None
     return render(request, 'event_list.html', {'events': events, 'registered_events': registered_events, 'registered_events_id_list': registered_events_id_list})
 
-
-
-
 @login_required
 def event_detail(request, event_id):
     """
@@ -95,8 +88,6 @@ def event_detail(request, event_id):
         'event': event,
         'registered_users': registered_users,
     })
-
-
 
 @login_required
 def register_for_event(request, event_id):
@@ -128,8 +119,6 @@ def register_for_event(request, event_id):
         messages.success(request, 'Successfully registered for the event.')
 
     return redirect('event_list')  # Redirect to event list after registration
-
-
 
 @login_required
 def unregister_event(request, event_id):
@@ -229,8 +218,6 @@ def view_event_attendees(request, event_id):
     attendees = event
     return render(request, 'event_attendees.html', {'event': event, 'attendees': event})
 
-
-
 @staff_member_required
 @login_required
 def view_registered_users(request, event_id):
@@ -287,8 +274,6 @@ def scan_barcode(request):
     else:
         return render(request, 'scan.html', {'current_url': request.path})
         
-
-
 def scan_QR_code_mobile(request):
     """
     Handles the QR code scanning for mobile devices, ensuring that the scan is processed correctly 
@@ -363,275 +348,6 @@ def scan_QR_code_mobile(request):
     else:
         events = Event.objects.all()
         return render(request, 'qr_code_scan.html', {'events': events})
-
-
-# @csrf_exempt
-# def scan_barcode_mobile(request):
-#     """
-#     Handles the barcode scan request from a mobile device for a specific event.
-
-#     Args:
-#         request (HttpRequest): The HTTP request object containing the request details.
-
-#     Returns:
-#         JsonResponse: A JSON response containing a message, time taken, and error if any.
-#         Alternatively, renders the 'mobile_scan.html' template if the request method is not POST.
-
-#     Logic:
-#         - Checks for a selected event, redirects to event selection if none.
-#         - Prevents frequent scans within a 5-second interval.
-#         - Processes POST requests to handle barcode scans.
-#         - Extracts and validates the barcode value from the POST data.
-#         - Checks if the barcode corresponds to a registered user and event.
-#         - Initiates a race start or finishes a race based on the scan state.
-#         - Returns appropriate JSON responses based on the scan state and validation results.
-#     """
-#     selected_event_id = request.session.get('selected_event_id')
-#     if not selected_event_id:
-#         return redirect('select_event')
-
-#     try:
-#         selected_event = Event.objects.get(id=selected_event_id)
-#     except Event.DoesNotExist:
-#         return JsonResponse({'message': None, 'time_taken': None, 'error': 'Selected event not found.'})
-
-#     last_scan_time = request.session.get('last_scan_time')
-#     if last_scan_time and (timezone.now() - datetime.fromisoformat(last_scan_time)) < timedelta(seconds=5):
-#         return JsonResponse({'message': None, 'time_taken': None, 'error': None})
-    
-#     request.session['last_scan_time'] = timezone.now().isoformat()
-    
-#     if request.method == 'POST':
-#         barcode_value_ob = request.POST.get("barcode_value")
-#         try:
-#             barcode_value = ''.join(filter(str.isdigit, barcode_value_ob))
-#         except Exception as e:
-#             return JsonResponse({'message': None, 'time_taken': None, 'error': 'Invalid barcode value.'})
-        
-#         barcode_data = Profile.objects.filter(barcode_value=barcode_value).first()
-        
-#         if barcode_data:
-#             registered_event = EventRegistration.objects.filter(
-#                 user=barcode_data.user,
-#                 event=selected_event
-#             ).exists()
-
-#             if registered_event:
-#                 barcode_scan = BarcodeScan.objects.filter(
-#                     user=barcode_data.user,
-#                     event=selected_event
-#                 ).first()
-
-#                 if barcode_scan is None:
-#                     # Start scan
-#                     scan = BarcodeScan(user=barcode_data.user, event=selected_event, scan_time=timezone.now())
-#                     scan.save()
-#                     return JsonResponse({
-#                         'message': f'Race start for {selected_event.name}, Please enjoy your race!',
-#                         'time_taken': None,
-#                         'error': None
-#                     })
-#                 else:
-#                     # Finish scan
-#                     if barcode_scan.time_taken:
-#                         message = f'This user {barcode_data.user.username} already participated in {selected_event.name}, Time taken: {barcode_scan.time_taken} seconds.'
-#                         return JsonResponse({'message': message, 'time_taken': None, 'error': None})
-                    
-#                     scan_time = timezone.now()
-#                     time_taken = (scan_time - barcode_scan.scan_time).total_seconds()
-#                     barcode_scan.scan_time = scan_time
-#                     barcode_scan.time_taken = time_taken
-#                     barcode_scan.save()
-#                     return JsonResponse({
-#                         'message': None,
-#                         'time_taken': f'Race Finished for {selected_event.name}, Time taken: {time_taken} seconds.',
-#                         'error': None
-#                     })
-#             else:
-#                 return JsonResponse({
-#                     'message': None,
-#                     'time_taken': None,
-#                     'error': f'User not registered for {selected_event.name}.'
-#                 })
-#         else:
-#             return JsonResponse({'message': None, 'time_taken': None, 'error': 'No user Found.'})
-#     else:
-#         return render(request, 'mobile_scan.html', {'event': selected_event})
-
-# @csrf_exempt
-# def scan_barcode_mobile(request, event_id):
-#     """
-#     Handles barcode scanning for race start and finish for individual users in a specific event.
-
-#     Args:
-#         request (HttpRequest): The HTTP request object containing POST data with action and barcode value.
-#         event_id (int): The ID of the event to process.
-
-#     Returns:
-#         JsonResponse: A JSON response with a message, time taken, or error message based on the action performed.
-#         HttpResponse: Renders a template with the event details if the request method is GET.
-
-#     Workflow:
-#         - Retrieves the selected event using the provided event ID.
-#         - If the event is not found, returns an error message.
-#         - If the request method is POST:
-#             - Processes barcode scanning for individual user start and finish times.
-#             - Validates barcode values and user registration.
-#             - Records start and finish times for each user.
-#             - Returns appropriate JSON responses based on the scan state.
-#         - If the request method is GET, renders a template for mobile scanning.
-#     """
-#     try:
-#         selected_event = Event.objects.get(id=event_id)
-#     except Event.DoesNotExist:
-#         return JsonResponse({'message': None, 'time_taken': None, 'error': 'Selected event not found.'})
-
-#     if request.method == 'POST':
-#         barcode_value = request.POST.get("barcode_value")
-        
-#         try:
-#             barcode_value = ''.join(filter(str.isdigit, barcode_value))
-#         except Exception as e:
-#             return JsonResponse({'message': None, 'time_taken': None, 'error': 'Invalid barcode value.'})
-        
-#         barcode_data = Profile.objects.filter(barcode_value=barcode_value).first()
-        
-#         if barcode_data:
-#             registered_event = EventRegistration.objects.filter(
-#                 user=barcode_data.user,
-#                 event=selected_event
-#             ).exists()
-
-#             if registered_event:
-#                 barcode_scan = BarcodeScan.objects.filter(
-#                     user=barcode_data.user,
-#                     event=selected_event
-#                 ).first()
-
-#                 if barcode_scan is None:
-#                     # Start scan
-#                     scan = BarcodeScan(user=barcode_data.user, event=selected_event, scan_time=timezone.now())
-#                     scan.save()
-#                     return JsonResponse({
-#                         'message': f'Race start for {barcode_data.user.username} in {selected_event.name}. Enjoy your race!',
-#                         'time_taken': None,
-#                         'error': None
-#                     })
-#                 else:
-#                     # Finish scan
-#                     if barcode_scan.time_taken:
-#                         message = f'User {barcode_data.user.username} has already completed {selected_event.name}. Time taken: {barcode_scan.time_taken} seconds.'
-#                         return JsonResponse({'message': message, 'time_taken': None, 'error': None})
-                    
-#                     scan_time = timezone.now()
-#                     time_taken = (scan_time - barcode_scan.scan_time).total_seconds()
-#                     barcode_scan.scan_time = scan_time
-#                     barcode_scan.time_taken = time_taken
-#                     barcode_scan.save()
-#                     return JsonResponse({
-#                         'message': f'Race Finished for {barcode_data.user.username} in {selected_event.name}',
-#                         'time_taken': f'Time taken: {time_taken} seconds.',
-#                         'error': None
-#                     })
-#             else:
-#                 return JsonResponse({
-#                     'message': None,
-#                     'time_taken': None,
-#                     'error': f'User not registered for {selected_event.name}.'
-#                 })
-#         else:
-#             return JsonResponse({'message': None, 'time_taken': None, 'error': 'No user found with this barcode.'})
-
-#     # Render the mobile scan page if the request method is GET
-#     return render(request, 'mobile_scan.html', {'event': selected_event})
-
-
-from django.utils import timezone
-from datetime import timedelta
-
-from django.http import HttpResponseBadRequest
-
-from django.utils import timezone
-from datetime import timedelta
-
-# @csrf_exempt
-# def scan_barcode_mobile(request, event_id):
-#     try:
-#         selected_event = Event.objects.get(id=event_id)
-#     except Event.DoesNotExist:
-#         return JsonResponse({'message': None, 'time_taken': None, 'error': 'Selected event not found.'})
-
-#     if request.method == 'POST':
-#         barcode_value = request.POST.get("barcode_value")
-        
-#         try:
-#             barcode_value = ''.join(filter(str.isdigit, barcode_value))
-#         except Exception as e:
-#             return JsonResponse({'message': None, 'time_taken': None, 'error': 'Invalid barcode value.'})
-        
-#         barcode_data = Profile.objects.filter(barcode_value=barcode_value).first()
-        
-#         if barcode_data:
-#             registered_event = EventRegistration.objects.filter(
-#                 user=barcode_data.user,
-#                 event=selected_event
-#             ).exists()
-
-#             if registered_event:
-#                 barcode_scan = BarcodeScan.objects.filter(
-#                     user=barcode_data.user,
-#                     event=selected_event
-#                 ).first()
-
-#                 current_time = timezone.now()
-
-#                 if barcode_scan is None:
-#                     # Start scan
-#                     scan = BarcodeScan(user=barcode_data.user, event=selected_event, scan_time=current_time)
-#                     scan.save()
-#                     return JsonResponse({
-#                         'message': f'{barcode_data.user.username} scanned successfully. Enjoy your race!',
-#                         'time_taken': None,
-#                         'error': None
-#                     })
-#                 else:
-#                     # Check if 30 seconds have passed since the start scan
-#                     if current_time - barcode_scan.scan_time < timedelta(seconds=30):
-#                         time_remaining = 30 - (current_time - barcode_scan.scan_time).total_seconds()
-#                         return JsonResponse({
-#                             'message': f'{barcode_data.user.username}  scanned successfully.',
-#                             'time_taken': None,
-#                             'error': None
-#                         })
-
-#                     # Finish scan
-#                     if barcode_scan.time_taken:
-#                         message = f'User {barcode_data.user.username} has already completed {selected_event.name}. Time taken: {barcode_scan.time_taken} seconds.'
-#                         return JsonResponse({'message': message, 'time_taken': None, 'error': None})
-                    
-#                     time_taken = (current_time - barcode_scan.scan_time).total_seconds()
-#                     barcode_scan.time_taken = time_taken
-#                     barcode_scan.save()
-#                     return JsonResponse({
-#                         'message': f'Race Finished for {barcode_data.user.username} in {selected_event.name}',
-#                         'time_taken': f'Time taken: {time_taken} seconds.',
-#                         'error': None
-#                     })
-#             else:
-#                 return JsonResponse({
-#                     'message': None,
-#                     'time_taken': None,
-#                     'error': f'User not registered for {selected_event.name}.'
-#                 })
-#         else:
-#             return JsonResponse({'message': None, 'time_taken': None, 'error': 'No user found with this barcode.'})
-
-#     # Render the mobile scan page if the request method is GET
-#     return render(request, 'mobile_scan.html', {'event': selected_event})
-
-
-
-
 
 @csrf_exempt
 def scan_barcode_mobile(request, event_id):
@@ -801,7 +517,6 @@ def camera_scan_barcode2(request, event_id):
 
     return render(request, 'mobile_scan2.html', {'event': selected_event})
 
-
 def select_event(request):
     """
     Displays a form for selecting an event and handles form submissions.
@@ -822,7 +537,6 @@ def select_event(request):
         form = EventSelectionForm()
     
     return render(request, 'select_event.html', {'form': form})
-
 
 def stop_event(request):
     """
@@ -855,7 +569,6 @@ def stop_event(request):
             return JsonResponse({'error': 'Event ID is required.'}, status=400)
     else:
         return HttpResponseBadRequest('Invalid request method.')
-
 
 @user_passes_test(lambda u: u.is_superuser)
 def send_email_user(request):
@@ -904,22 +617,6 @@ def send_email_user(request):
             messages.error(request, 'An error occurred while sending emails.')
     
     return render(request, 'send_email.html')
-
-
-
-
-
-
-
-from django.contrib import messages
-from django.conf import settings
-from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404, render
-from django.contrib.auth.decorators import user_passes_test
-import logging
-from django.utils.safestring import mark_safe
-
-logger = logging.getLogger(__name__)
 
 @user_passes_test(lambda u: u.is_superuser)
 def event_results(request, event_id):
@@ -979,44 +676,6 @@ def event_results(request, event_id):
     }
     
     return render(request, 'event_results.html', context)
-
-
-
-
-
-
-
-
-# def event_results(request, event_id):
-#     """
-#     Displays the results of an event, including all barcode scan records.
-
-#     Args:
-#         request (HttpRequest): The HTTP request object.
-#         event_id (int): The ID of the event for which to display results.
-
-#     Returns:
-#         HttpResponse: Renders the event results page with the event and its scan records.
-#     """
-#     # Get the event based on the event_id
-#     event = get_object_or_404(Event, id=event_id)
-    
-#     # Filter the BarcodeScan records for the selected event
-#     results = BarcodeScan.objects.filter(event=event).order_by('scan_time')
-
-#     context = {
-#         'event': event,
-#         'results': results,
-#     }
-    
-#     return render(request, 'event_results.html', context)
-
-
-from django.shortcuts import render
-from .models import AboutSection
-
-from django.shortcuts import render
-from .models import AboutSection
 
 def about_us(request):
     # Fetch the first entry in AboutSection (assuming only one entry)
