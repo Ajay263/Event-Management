@@ -198,3 +198,103 @@ CSRF_TRUSTED_ORIGINS = [
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
+JAZZMIN_SETTINGS = {
+    # Basic Settings
+    "site_title": "OCR",
+    "site_header": "OCR",
+    "site_brand": "OCR",
+    "site_icon": "images/logo.png",
+    "site_logo": "images/logo.png",
+    "welcome_sign": "Welcome to the OCR Admin",
+    "copyright": "OCR",
+    "user_avatar": "images/logo.png",
+    
+    # Top Menu
+    "topmenu_links": [
+        {"name": "OCR", "url": "home", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+    ],
+    
+    # Side Menu
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "users.User": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "admin.LogEntry": "fas fa-file",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    
+    # UI Customization
+    "related_modal_active": True,
+    "custom_css": None,
+    "custom_js": None,
+    "show_ui_builder": True,
+    
+    # Change Form Settings
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "auth.user": "collapsible",
+        "auth.group": "vertical_tabs",
+    },
+    
+    # Custom Links
+    "order_with_respect_to": ["auth", "books", "books.author", "books.book"],
+    
+    # Custom Colors
+    "custom_style": {
+        "primary-color": "#007bff",
+        "secondary-color": "#6c757d",
+        "accent-color": "#ffffff"
+    }
+}
+
+JAZZMIN_UI_TWEAKS = {
+    # Text Settings
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    
+    # Colors and Theme
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-light",  # Light navbar for better contrast with blue
+    "no_navbar_border": False,
+    
+    # Layout Settings
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-light-primary",  # Light sidebar with blue accents
+    
+    # Sidebar Settings
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": True,
+    
+    # Theme
+    "theme": "default",  # Using default theme for clean white background
+    "dark_mode_theme": None,
+    
+    # Button Classes
+    "button_classes": {
+        "primary": "btn-primary",  # Will use the blue color
+        "secondary": "btn-outline-primary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    },
+    
+    # Custom CSS Classes
+    "actions_sticky_top": False
+}
