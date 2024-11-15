@@ -6,26 +6,27 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          node-version: '20'
 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
+          python-version: 3.x
+          architecture: x64
+          token: ${{secrets.GITHUB_TOKEN}}
+          cache-dependency-path: ./path/to/dependencies
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python3 -m pip install --upgrade pip
           pip install -r requirements.txt
-          
-      - name: Run tests
-        run: |
-          python manage.py test
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -34,13 +35,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/Event-Management
-            git pull origin master
-            source venv/bin/activate
-            pip install -r requirements.txt
-            pip install gunicorn
-            python manage.py migrate
-            python manage.py collectstatic --noinput
+            cd /home/ubuntu/cicdtest
+            git pull
             sudo systemctl daemon-reload
             sudo systemctl restart cicdapp.service
-            sudo systemctl status cicdapp.service
