@@ -1,20 +1,17 @@
 name: Django CI/CD
-
 on:
   push:
     branches:
       - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
           node-version: '20'
-
+      
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -22,12 +19,12 @@ jobs:
           architecture: x64
           token: ${{secrets.GITHUB_TOKEN}}
           cache-dependency-path: ./path/to/dependencies
-
+      
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
-
+      
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
@@ -37,5 +34,15 @@ jobs:
           script: |
             cd /home/ubuntu/Event-Management
             git pull
+            source venv/bin/activate
+            python manage.py makemigrations
+            python manage.py migrate
+            
+            # Create superuser using environment variables
+            if [ ! -f ".superuser_created" ]; then
+              echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('${{ secrets.DJANGO_SUPERUSER_USERNAME }}', '${{ secrets.DJANGO_SUPERUSER_EMAIL }}', '${{ secrets.DJANGO_SUPERUSER_PASSWORD }}')" | python manage.py shell
+              touch .superuser_created
+            fi
+            
             sudo systemctl daemon-reload
             sudo systemctl restart Event-Management.service
