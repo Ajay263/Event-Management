@@ -55,7 +55,7 @@ def event_list(request):
     View function for displaying a list of events.
 
     Parameters:
-        request (HttpRequest): The HTTP request object.
+        request (HttpRequest): The HTTP request object
 
     Returns:
         HttpResponse: HTTP response containing the list of events.
