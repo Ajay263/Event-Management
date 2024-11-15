@@ -38,4 +38,4 @@ jobs:
             cd /home/ubuntu/Event-Management
             git pull
             sudo systemctl daemon-reload
-            sudo systemctl restart cicdapp.service
+            sudo systemctl restart Event-Management.service
