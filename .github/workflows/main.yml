@@ -35,7 +35,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/cicdtest
+            cd /home/ubuntu/Event-Management
             git pull
             sudo systemctl daemon-reload
             sudo systemctl restart cicdapp.service
