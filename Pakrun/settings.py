@@ -176,7 +176,7 @@ CSRF_COOKIE_HTTPONLY = False  # Temporarily set to False for debugging
 CSRF_USE_SESSIONS = False  # Use cookie-based storage
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_TRUSTED_ORIGINS = [
-    "https://event-management-t0dm.onrender.com",
+    "https://www.trailtiming.co.za",
     "http://localhost",
     "http://127.0.0.1",
 ]
