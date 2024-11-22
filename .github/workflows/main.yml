@@ -8,21 +8,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          node-version: '20'
+        uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: '3.12'
           architecture: x64
-          token: ${{secrets.GITHUB_TOKEN}}
-          cache-dependency-path: ./path/to/dependencies
       
       - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
       
       - name: Deploy to EC2
@@ -31,10 +27,14 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: 22
+          timeout: 2m  # Increased timeout
+          command_timeout: 15m
           script: |
             cd /home/ubuntu/Event-Management
-            git pull
+            git pull origin main
             source venv/bin/activate
+            pip install -r requirements.txt
             python manage.py makemigrations
             python manage.py migrate
             
