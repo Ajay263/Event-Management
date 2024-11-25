@@ -40,6 +40,10 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: 22
+          script_stop: true
+          timeout: 60s
+          command_timeout: 20m
           script: |
             cd /home/ubuntu/Event-Management
             git pull origin main
