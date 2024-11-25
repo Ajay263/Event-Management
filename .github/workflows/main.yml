@@ -4,25 +4,41 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x' # Fixed version to a valid value
-          architecture: x64
+          python-version: '3.10'
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Run tests
+        env:
+          DJANGO_SETTINGS_MODULE: your_project.settings
+        run: |
+          python manage.py test
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -32,16 +48,28 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/Event-Management
-            git pull
+            git pull origin main
+            
+            # Activate virtual environment
             source venv/bin/activate
+            
+            # Install/upgrade dependencies
+            pip install --upgrade pip
+            pip install -r requirements.txt
+            
+            # Run migrations
             python manage.py makemigrations
             python manage.py migrate
+            
+            # Collect static files
+            python manage.py collectstatic --noinput
             
             # Create superuser using environment variables
             if [ ! -f ".superuser_created" ]; then
               echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('${{ secrets.DJANGO_SUPERUSER_USERNAME }}', '${{ secrets.DJANGO_SUPERUSER_EMAIL }}', '${{ secrets.DJANGO_SUPERUSER_PASSWORD }}')" | python manage.py shell
               touch .superuser_created
             fi
-
+            
+            # Restart the service
             sudo systemctl daemon-reload
             sudo systemctl restart Event-Management.service
