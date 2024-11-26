@@ -36,7 +36,7 @@ def create_event(request):
         request (HttpRequest): The HTTP request object.
 
     Returns:
-        HttpResponse: HTTP response containing the event creation form.
+        HttpResponse: HTTP response containing the event creation form
     """
     if request.method == 'POST':
         form = EventForm(request.POST)
