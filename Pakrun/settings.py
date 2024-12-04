@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!x7)v_!)*c3$f)s-x867_#q74dvjq*(dwvh8rw*4gwcp6)$kw6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['trailtiming.co.za', 'www.trailtiming.co.za']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -182,13 +182,13 @@ CSRF_TRUSTED_ORIGINS = [
 
 
 # Security settings for HTTPS
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
 
-SECURE_BROWSER_XSS_FILTER = True
+SECURE_BROWSER_XSS_FILTER = False
 SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
 
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
