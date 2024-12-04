@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-!x7)v_!)*c3$f)s-x867_#q74dvjq*(dwvh8rw*4gwcp6)$kw6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['trailtiming.co.za', 'www.trailtiming.co.za', '13.61.62.204']
+
 
 # Application definition
 
@@ -164,36 +165,34 @@ AUTHENTICATION_BACKENDS = [
     'account.authentication.EmailAuthBackend',
 ]
 
-# CSRF_COOKIE_SECURE = False
-# CSRF_COOKIE_HTTPONLY = True
-# CSRF_USE_SESSIONS = True
+CSRF_COOKIE_SECURE = Trues
+CSRF_COOKIE_HTTPONLY = True
+CSRF_USE_SESSIONS = True
 
-# CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 
-# CSRF_TRUSTED_ORIGINS = ["https://event-management-t0dm.onrender.com"]  
+
 
 
 
 # CSRF settings
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
-CSRF_COOKIE_HTTPONLY = False  # Temporarily set to False for debugging
-CSRF_USE_SESSIONS = False  # Use cookie-based storage
+CSRF_COOKIE_SECURE = True  # Set to True in production with HTTPS
+CSRF_COOKIE_HTTPONLY = True  # Temporarily set to False for debugging
+CSRF_USE_SESSIONS = True  # Use cookie-based storage
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_TRUSTED_ORIGINS = [
-    "https://www.trailtiming.co.za",
-    "http://localhost",
-    "http://127.0.0.1",
-]
-
+    "https://trailtiming.co.za",
+    "https://www.trailtiming.co.za"
+] 
 
 # Security settings for HTTPS
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
 
-SECURE_BROWSER_XSS_FILTER = False
+SECURE_BROWSER_XSS_FILTER = True
 SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = False
-SECURE_HSTS_PRELOAD = False
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
