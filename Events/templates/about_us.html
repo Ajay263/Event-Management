@@ -12,25 +12,27 @@
         }
         .hero-section {
             background-color: #f8f9fa;
-            padding: 25px 0; /* Reduced from 100px to 25px */
+            padding: 25px 0;
         }
         .hero-section .container {
             max-width: 1400px;
         }
         .content-wrapper {
             display: flex;
-            gap: 40px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 20px;
         }
         .text-content {
             flex: 1;
-            padding-right: 40px;
-            max-width: 600px;
+            min-width: 300px; /* Ensure minimum width */
+            padding-right: 0; /* Remove right padding */
         }
         .image-content {
             flex: 1;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
+            min-width: 300px; /* Ensure minimum width */
         }
         .hero-image {
             border-radius: 10px;
@@ -41,14 +43,15 @@
         }
         .stats-row {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
         }
         .stat-card {
             background-color: #fff;
             border-radius: 10px;
             transition: transform 0.3s ease;
+            padding: 15px;
         }
         .stat-card:hover {
             transform: translateY(-5px);
@@ -60,8 +63,10 @@
             font-size: 18px;
             transition: background-color 0.3s ease;
             color: white;
-            margin-top: 30px;
+            margin-top: 20px;
             display: inline-block;
+            width: 100%; /* Full width on small screens */
+            text-align: center;
         }
         .cta-button:hover {
             background-color: #45a049;
@@ -77,6 +82,45 @@
         }
         footer a:hover {
             text-decoration: underline;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                text-align: center;
+            }
+            .navbar-nav .nav-item {
+                padding: 10px 0;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .user {
+                text-align: center;
+                margin-top: 15px;
+            }
+            .form-inline {
+                justify-content: center;
+                margin-top: 15px;
+            }
+            .content-wrapper {
+                flex-direction: column;
+            }
+            .text-content, .image-content {
+                width: 100%;
+                padding-right: 0;
+                max-width: 100%;
+            }
+            .hero-image {
+                margin-top: 20px;
+            }
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .display-4 {
+                font-size: 2rem;
+            }
+            .lead {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -155,7 +199,9 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
