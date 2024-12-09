@@ -2,42 +2,37 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet">
     <title>Login to Your Account</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
         .btn-color {
             background-color: #28a745; /* Green color */
             color: #fff;
         }
-
         .profile-image-pic {
             height: 200px;
             width: 200px;
             object-fit: cover;
         }
-
         .cardbody-color {
             background-color: #ebf2fa;
         }
-
         a {
             text-decoration: none;
         }
-
         .forgot-password-link {
             color: #007bff;
             font-size: 0.9rem;
             transition: color 0.3s ease-in-out;
             position: relative;
         }
-
         .forgot-password-link:hover {
             color: #0056b3;
             text-decoration: underline;
         }
-
         .forgot-password-link::before {
             content: '';
             position: absolute;
@@ -50,15 +45,50 @@
             transform: scaleX(0);
             transition: all 0.3s ease-in-out;
         }
-
         .forgot-password-link:hover::before {
             visibility: visible;
             transform: scaleX(1);
         }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            .card {
+                margin-top: 20px !important;
+                margin-bottom: 20px !important;
+            }
+            
+            .profile-image-pic {
+                height: 150px;
+                width: 150px;
+            }
+            
+            .card-body {
+                padding: 1.25rem !important;
+            }
+            
+            input, button {
+                font-size: 16px; /* Prevent iOS zoom on focus */
+            }
+        }
+        
+        /* Ensure full-width on small screens */
+        .btn-color {
+            width: 100%;
+        }
+        
+        /* Prevent form elements from being too narrow */
+        .form-control, .btn {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="row">
         <div class="col-md-6 offset-md-3">
@@ -92,11 +122,9 @@
         </div>
     </div>
 </div>
-
 <!-- Bootstrap JS dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 </body>
 </html>
