@@ -4,12 +4,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Event List11</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <!-- Added viewport meta tag for mobile responsiveness -->
+    <title>Event List</title>
     <link href="{% static 'css/base.css' %}" rel="stylesheet" />
     <!-- Add Bootstrap CSS link -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <style>
-        /* Your existing CSS styles */
+        /* Existing styles with mobile-responsive adjustments */
         .search-event {
             width: 100%;
             padding: 10px;
@@ -19,19 +20,52 @@
         .event-list-heading {
             text-align: center;
             margin-bottom: 20px;
+            font-size: 1.5rem; /* Smaller font for mobile */
         }
         .card-img-top {
             width: 100%;
-            height: 200px; /* Adjust height as needed */
+            height: 200px;
             object-fit: cover;
         }
         .event-card {
             cursor: pointer;
+            margin-bottom: 15px; /* Add more space between cards on mobile */
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                text-align: center;
+            }
+            .navbar-nav .nav-item {
+                padding: 10px 0;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .user {
+                text-align: center;
+                margin-top: 15px;
+            }
+            .form-inline {
+                justify-content: center;
+                margin-top: 15px;
+            }
+            .event-list-heading input {
+                display: block;
+                width: 100%;
+                margin-top: 10px;
+            }
+            .card-body {
+                padding: 10px; /* Reduce padding on small screens */
+            }
+            .btn {
+                margin: 5px 0; /* Add margin to buttons for better touch targets */
+                width: 100%; /* Full-width buttons on mobile */
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Replace existing header with new Bootstrap navbar -->
+    <!-- Navbar with mobile-first design -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">OCR</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,9 +74,6 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                {% comment %} <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard' %}">Home</a>
-                </li> {% endcomment %}
                 <li class="nav-item active">
                     <a class="nav-link" href="#">Events <span class="sr-only">(current)</span></a>
                 </li>
@@ -54,7 +85,7 @@
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2 search-event" type="search" placeholder="Search event by name/location here!" aria-label="Search" />
+                <input class="form-control mr-sm-2 search-event" type="search" placeholder="Search event by name/location!" aria-label="Search" />
             </form>
             <div class="user">
                 {% if user.is_authenticated %}
@@ -66,7 +97,7 @@
         </div>
     </nav>
 
-    <div id="content" class="container">
+    <div id="content" class="container-fluid px-3"> <!-- Changed to container-fluid for better mobile layout -->
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -81,7 +112,7 @@
 
         <h1 class="event-list-heading">
             Event List 
-            <input type="submit" value="Create Event" onclick="triggerLinkClick()" />
+            <input type="submit" class="btn btn-primary" value="Create Event" onclick="triggerLinkClick()" />
         </h1>
         <a class="add-event" href="{% url 'create_event' %}" id="add-event-link"></a>
 
@@ -93,18 +124,15 @@
 
         <div class="row">
             {% for event in events %}
-            <div class="col-md-4 mb-3 card event-card" data-name="{{ event.name|lower }}" data-location="{{ event.location|lower }}">
-                <div class="card">
+            <div class="col-12 col-sm-6 col-md-4 mb-3 event-card" data-name="{{ event.name|lower }}" data-location="{{ event.location|lower }}">
+                <div class="card h-100"> <!-- Added h-100 for consistent card height -->
                     {% if event.img %}
-                    <!-- Display event image if available -->
                     <img class="card-img-top" src="{{ event.img.url }}" alt="{{ event.name }}" />
                     {% else %}
-                    <!-- Default image if no event image is available -->
                     <img class="card-img-top" src="{% static 'images/default_event_image.jpg' %}" alt="Default Image" />
                     {% endif %}
 
-                    <div class="card-body">
-                        <!-- Clickable event title -->
+                    <div class="card-body d-flex flex-column"> <!-- Use flexbox for button positioning -->
                         <h5 class="card-title">
                             <a href="{% url 'event_detail' event.id %}" class="text-decoration-none text-dark">{{ event.name }}</a>
                         </h5>
@@ -112,29 +140,25 @@
                             <strong>Date:</strong> {{ event.date }}<br />
                             <strong>Location:</strong> {{ event.location }}
                         </p>
-                        <form method="post" action="{% url 'register_for_event' event.id %}">
+                        <form method="post" action="{% url 'register_for_event' event.id %}" class="mt-auto"> <!-- mt-auto pushes buttons to bottom -->
                             {% csrf_token %}
                             <input type="hidden" name="user_id" value="{{ user.id }}" />
                             {% if user.is_authenticated %}
                             {% if user.is_staff %}
-                            <!-- Admin options -->
-                            {% comment %} <a href="{% url 'view_registered_users' event.id %}" class="btn btn-primary">View Registered Users</a> {% endcomment %}
-                            
-                            <a href="{% url 'delete_event' event.id %}" class="btn btn-danger">Delete</a>
-                            <a href="{% url 'edit_event' event.id %}" class="btn btn-primary">Edit</a>
-
-                            <!-- Conditional Register/De-register Button for Admin -->
+                            <div class="btn-group-vertical w-100"> <!-- Vertical button group for better mobile layout -->
+                                <a href="{% url 'delete_event' event.id %}" class="btn btn-danger">Delete</a>
+                                <a href="{% url 'edit_event' event.id %}" class="btn btn-primary">Edit</a>
+                                {% if event.id in registered_events_id_list %}
+                                <button type="submit" class="btn btn-danger">De-register</button>
+                                {% else %}
+                                <button type="submit" class="btn btn-success">Register</button>
+                                {% endif %}
+                            </div>
+                            {% else %}
                             {% if event.id in registered_events_id_list %}
-                            <button type="submit" class="btn btn-danger">De-register</button>
+                            <button type="submit" class="btn btn-danger btn-block">De-register</button>
                             {% else %}
-                            <button type="submit" class="btn btn-success">Register</button>
-                            {% endif %}
-                            {% else %}
-                            <!-- Regular user options -->
-                            {% if event.id in registered_events_id_list %}
-                            <button type="submit" class="btn btn-danger">De-register</button>
-                            {% else %}
-                            <button type="submit" class="btn btn-success">Register</button>
+                            <button type="submit" class="btn btn-success btn-block">Register</button>
                             {% endif %}
                             {% endif %}
                             {% endif %}
@@ -146,7 +170,9 @@
         </div>
     </div>
 
-    <!-- Add Bootstrap JS (optional, if needed) -->
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
@@ -156,12 +182,12 @@
             form.classList.add("form-inline", "my-2", "my-lg-0");
 
             const inputGroup = document.createElement("div");
-            inputGroup.classList.add("input-group");
+            inputGroup.classList.add("input-group", "w-100"); // Added full width
 
             const input = document.createElement("input");
             input.classList.add("form-control", "mr-sm-2");
             input.setAttribute("type", "search");
-            input.setAttribute("placeholder", "Search");
+            input.setAttribute("placeholder", "Search events");
             inputGroup.appendChild(input);
 
             const button = document.createElement("button");
@@ -183,12 +209,11 @@
                 eventCards.forEach(function (card) {
                     const name = card.dataset.name;
                     const location = card.dataset.location;
-                    const cardElement = card.closest(".card");
 
                     if (name.includes(searchText) || location.includes(searchText)) {
-                        cardElement.style.display = "block";
+                        card.style.display = "block";
                     } else {
-                        cardElement.style.display = "none";
+                        card.style.display = "none";
                     }
                 });
             });
