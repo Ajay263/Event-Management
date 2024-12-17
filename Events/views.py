@@ -591,7 +591,7 @@ def send_email_user(request):
                 # Filter scans for the current user that have a non-null time_taken value
                 scans = BarcodeScan.objects.filter(user=user, time_taken__isnull=False)
                 if scans.exists():
-                    subject = 'OCR Time Details'
+                    subject = 'Trailtiming Time Details'
                     message = (
                         f"Hello {user.username},\n\n"
                         "Congratulations on completing your race! We are thrilled to share your scan details with you.\n\n"
