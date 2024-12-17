@@ -1,46 +1,147 @@
 {% extends "base.html" %}
-
-{% block title %}Dashboard{% endblock %}
-
+{% block title %}Registeres Users{% endblock %}
 {% block content %}
-<div class="container mt-5" style="max-width: 80%;">
-    <h1 class="text-center mb-4">Registered Users for {{ event.name }}</h1>
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Registration Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event_registration in registered_users %}
-                <tr>
-                    <td>{{ event_registration.user.username }}</td>
-                    <td>{{ event_registration.user.email }}</td>
-                    <td>{{ event_registration.registration_date }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="container-fluid px-4">
+    <div class="content-wrapper">
+        <h1 class="text-center mb-4">Registered Users for {{ event.name }}</h1>
+        
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover custom-table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Username</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Registration Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event_registration in registered_users %}
+                        <tr>
+                            <td>{{ event_registration.user.username }}</td>
+                            <td>{{ event_registration.user.email }}</td>
+                            <td>{{ event_registration.registration_date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-    /* Additional custom styles */
+    /* Container styles */
+    .content-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    /* Header styles */
     h1 {
         font-size: 2rem;
         color: #343a40;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
     }
-    .table {
-        margin-top: 20px;
+
+    /* Table container styles */
+    .table-container {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
     }
-    .table th, .table td {
+
+    /* Table styles */
+    .custom-table {
+        margin-bottom: 0;
+        width: 100%;
+        background: #fff;
+    }
+
+    .custom-table thead th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        padding: 1rem;
+        font-weight: 600;
+        color: #495057;
+        white-space: nowrap;
+    }
+
+    .custom-table tbody td {
+        padding: 0.875rem 1rem;
         vertical-align: middle;
+        border-color: #e9ecef;
     }
+
     .table-hover tbody tr:hover {
         background-color: #f8f9fa;
+        transition: background-color 0.2s ease;
+    }
+
+    /* Email cell specific styles */
+    .custom-table td:nth-child(2) {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Responsive styles */
+    @media screen and (max-width: 768px) {
+        .content-wrapper {
+            padding: 1rem 0;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            padding: 0 1rem;
+        }
+
+        .table-responsive {
+            border: none;
+            margin-bottom: 0;
+        }
+
+        .custom-table {
+            font-size: 0.875rem;
+        }
+
+        .custom-table thead th,
+        .custom-table tbody td {
+            padding: 0.75rem;
+        }
+
+        /* Adjust email cell width for mobile */
+        .custom-table td:nth-child(2) {
+            max-width: 150px;
+        }
+    }
+
+    @media screen and (max-width: 576px) {
+        .container-fluid {
+            padding: 0 0.75rem;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+        }
+
+        .custom-table {
+            font-size: 0.8125rem;
+        }
+
+        .custom-table thead th,
+        .custom-table tbody td {
+            padding: 0.625rem;
+        }
+
+        /* Further reduce email cell width for smaller screens */
+        .custom-table td:nth-child(2) {
+            max-width: 120px;
+        }
     }
 </style>
 {% endblock %}
