@@ -602,7 +602,7 @@ def send_email_user(request):
                     message += (
                         "\nYour performance was outstanding, and we are proud of your achievement.\n\n"
                         "Best Regards,\n"
-                        "OCR"
+                        "Trailtiming Team"
                     )
                     recipient_list = [user.email]
 
