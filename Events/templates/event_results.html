@@ -1,9 +1,7 @@
 {% extends "base.html" %}
-
 {% block title %}Event Results{% endblock %}
-
 {% block content %}
-<div class="container mt-5" style="max-width: 80%;">
+<div class="container mt-5" style="max-width: 100%; padding: 0 15px;">
     <h1 class="text-center mb-4">Results for {{ event.name }}</h1>
     
     {% if results %}
@@ -17,13 +15,12 @@
         </form>
     </div>
     {% endif %}
-
     <div class="table-responsive">
         {% if results %}
             <table class="table table-bordered table-hover">
                 <thead class="thead-light">
                     <tr>
-                        <th>#</th>  <!-- Added column for numbering -->
+                        <th>#</th>
                         <th>Username</th>
                         <th>Scan Time</th>
                         <th>Time Taken (seconds)</th>
@@ -32,10 +29,10 @@
                 <tbody>
                     {% for result in results %}
                     <tr>
-                        <td>{{ forloop.counter }}</td>  <!-- Added numbering for each row -->
-                        <td>{{ result.user.username }}</td>
-                        <td>{{ result.scan_time }}</td>
-                        <td>{{ result.time_taken }}</td>
+                        <td data-label="#">{{ forloop.counter }}</td>
+                        <td data-label="Username">{{ result.user.username }}</td>
+                        <td data-label="Scan Time">{{ result.scan_time }}</td>
+                        <td data-label="Time Taken">{{ result.time_taken }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -45,21 +42,86 @@
         {% endif %}
     </div>
 </div>
-
 <style>
     /* Additional custom styles */
     h1 {
         font-size: 2rem;
         color: #343a40;
     }
+    
     .table {
         margin-top: 20px;
+        width: 100%;
     }
+    
     .table th, .table td {
         vertical-align: middle;
     }
+    
     .table-hover tbody tr:hover {
         background-color: #f8f9fa;
+    }
+
+    /* Responsive styles */
+    @media screen and (max-width: 768px) {
+        h1 {
+            font-size: 1.5rem;
+        }
+        
+        .btn {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        
+        .text-right {
+            text-align: center !important;
+        }
+        
+        /* Responsive table styles */
+        .table thead {
+            display: none;
+        }
+        
+        .table, .table tbody, .table tr, .table td {
+            display: block;
+            width: 100%;
+        }
+        
+        .table tr {
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+        }
+        
+        .table td {
+            text-align: right;
+            padding-left: 50%;
+            position: relative;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .table td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 0;
+            width: 45%;
+            padding-left: 15px;
+            font-weight: bold;
+            text-align: left;
+        }
+        
+        .table td:last-child {
+            border-bottom: none;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .container {
+            padding: 0 10px;
+        }
+        
+        h1 {
+            font-size: 1.25rem;
+        }
     }
 </style>
 {% endblock %}
