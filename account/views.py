@@ -126,7 +126,7 @@ def register(request):
             Profile.objects.create(user=new_user)
             
             # Send email to the user
-            subject = 'Welcome to OCR'
+            subject = 'Welcome to Trailtiming'
             message = f'''Hello {new_user.username},
 
 Your account has been successfully created. Here are your account details:
@@ -140,7 +140,7 @@ Please consider changing your password after your first login for security reaso
 Welcome aboard!
 
 Best regards,
-OCR Team'''
+Trailtiming Team'''
             from_email = settings.DEFAULT_FROM_EMAIL
             recipient_list = [new_user.email]
             
