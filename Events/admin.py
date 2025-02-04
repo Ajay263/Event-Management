@@ -3,16 +3,20 @@ from django.utils.html import format_html
 from django.urls import reverse
 from .models import Event, EventRegistration, BarcodeScan, AboutSection, Stat, QRCodeData
 
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'date', 'location', 'created_by', 'display_image', 'registrations_count', 'view_registered_users')
-    list_filter = ('date', 'location', 'created_by')
-    search_fields = ('name', 'location', 'created_by__username')
+    list_filter = ('date', 'location', 'created_by', 'terrain_type')
+    search_fields = ('name', 'location', 'created_by__username', 'description')
     date_hierarchy = 'date'
     readonly_fields = ('registrations_count',)
     fieldsets = (
         ('Event Details', {
-            'fields': ('name', 'date', 'location', 'created_by')
+            'fields': ('name', 'date', 'location', 'created_by', 'description')
+        }),
+        ('Race Information', {
+            'fields': ('distance', 'number_of_obstacles', 'terrain_type')
         }),
         ('Timing', {
             'fields': ('start_time', 'stop_time')

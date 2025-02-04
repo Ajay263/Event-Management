@@ -3,28 +3,41 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.urls import reverse
 from django.utils.html import mark_safe
+from django.core.validators import MinValueValidator
 
 class Event(models.Model):
+    TERRAIN_CHOICES = [
+        ('ROAD', 'Road'),
+        ('TRAIL', 'Trail'),
+        ('MIXED', 'Mixed Terrain'),
+        ('TRACK', 'Track'),
+        ('CROSS', 'Cross Country'),
+    ]
+
     name = models.CharField(
         max_length=100,
         help_text="Enter the name of the event",
         verbose_name="Event Name"
     )
+    
     date = models.DateField(
         help_text="Select the date of the event",
         verbose_name="Event Date"
     )
+    
     location = models.CharField(
         max_length=255,
         help_text="Enter the location/venue of the event",
         verbose_name="Event Location"
     )
+    
     created_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name="Event Creator",
         related_name='created_events'
     )
+    
     img = models.ImageField(
         upload_to='event_images/',
         null=True,
@@ -32,17 +45,53 @@ class Event(models.Model):
         verbose_name="Event Image",
         help_text="Upload an image for the event (optional)"
     )
+    
     start_time = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name="Start Time",
         help_text="Enter the start time of the event"
     )
+    
     stop_time = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name="End Time",
         help_text="Enter the end time of the event"
+    )
+
+    # New fields for race details
+    description = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Describe the race, including any special requirements or instructions",
+        verbose_name="Race Description"
+    )
+
+    distance = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0.01)],
+        help_text="Enter the distance to be covered (in kilometers)",
+        verbose_name="Race Distance (km)"
+    )
+
+    number_of_obstacles = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text="Enter the total number of obstacles in the race (if applicable)",
+        verbose_name="Number of Obstacles"
+    )
+
+    terrain_type = models.CharField(
+        max_length=20,
+        choices=TERRAIN_CHOICES,
+        null=True,
+        blank=True,
+        help_text="Select the primary terrain type for the race",
+        verbose_name="Terrain Type"
     )
 
     class Meta:
