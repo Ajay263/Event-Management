@@ -89,12 +89,42 @@ def event_detail(request, event_id):
         'registered_users': registered_users,
     })
 
+# @login_required
+# def register_for_event(request, event_id):
+#     """
+#     View function for registering for an event.
+
+#     Only logged-in users can access this view.
+
+#     Parameters:
+#         request (HttpRequest): The HTTP request object.
+#         event_id (int): The ID of the event to register for.
+
+#     Returns:
+#         HttpResponse: HTTP response redirecting to the event list page after registration.
+#     """
+#     event = get_object_or_404(Event, id=event_id)
+
+#     # Prevent registration if the event has been stopped
+#     if event.stop_time and timezone.now() > event.stop_time:
+#         messages.error(request, 'The event has already ended. Registration is closed.')
+#         return redirect('event_list')
+
+#     # Check if the user is already registered for the event
+#     if EventRegistration.objects.filter(event=event, user=request.user).exists():
+#         messages.warning(request, 'You are already registered for this event.')
+#     else:
+#         # Add the logged-in user to the attendees of the event
+#         EventRegistration.objects.create(event=event, user=request.user)
+#         messages.success(request, 'Successfully registered for the event.')
+
+#     return redirect('event_list')  # Redirect to event list after registration
+
+
 @login_required
 def register_for_event(request, event_id):
     """
-    View function for registering for an event.
-
-    Only logged-in users can access this view.
+    View function for registering a user for an event with email notification.
 
     Parameters:
         request (HttpRequest): The HTTP request object.
@@ -113,13 +143,68 @@ def register_for_event(request, event_id):
     # Check if the user is already registered for the event
     if EventRegistration.objects.filter(event=event, user=request.user).exists():
         messages.warning(request, 'You are already registered for this event.')
-    else:
-        # Add the logged-in user to the attendees of the event
+        return redirect('event_list')
+
+    try:
+        # Create the registration
         EventRegistration.objects.create(event=event, user=request.user)
-        messages.success(request, 'Successfully registered for the event.')
+        
+        # Prepare email content
+        subject = f'Registration Confirmation: {event.name}'
+        
+        # Format dates and times for email
+        event_date = event.date.strftime('%B %d, %Y')
+        start_time = event.start_time.strftime('%I:%M %p') if event.start_time else 'Not specified'
+        stop_time = event.stop_time.strftime('%I:%M %p') if event.stop_time else 'Not specified'
+        
+        # Build terrain and distance information
+        terrain_info = f"Terrain: {event.get_terrain_type_display()}" if event.terrain_type else ""
+        distance_info = f"Distance: {event.distance}km" if event.distance else ""
+        
+        # Construct the email message
+        message = f"""
+Dear {request.user.get_full_name() or request.user.username},
 
-    return redirect('event_list')  # Redirect to event list after registration
+You have successfully registered for {event.name}!
 
+Event Details:
+-------------
+Date: {event_date}
+Location: {event.location}
+Start Time: {start_time}
+End Time: {stop_time}
+{terrain_info}
+{distance_info}
+
+Description:
+{event.description or 'No description provided.'}
+
+You can view the full event details at:
+{request.build_absolute_uri(reverse('event_detail', args=[event.id]))}
+
+If you have any questions, please don't hesitate to contact us.
+
+Best regards,
+Trailtiming Team
+"""
+
+        # Send the email
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [request.user.email],
+            fail_silently=False,
+        )
+
+        messages.success(request, 'Successfully registered for the event. A confirmation email has been sent to your address.')
+    
+    except Exception as e:
+        # Log the error
+        logger.error(f"Error during event registration: {str(e)}")
+        messages.error(request, 'An error occurred during registration. Please try again or contact support.')
+        
+    return redirect('event_list')
 @login_required
 def unregister_event(request, event_id):
     """
@@ -693,3 +778,7 @@ def about_us(request):
         'stats': about_section.stats.all(),
     }
     return render(request, 'about_us.html', context)
+
+
+
+
